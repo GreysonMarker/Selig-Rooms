@@ -1,0 +1,11 @@
+import assert from 'node:assert/strict';
+import {Hunter,Navigator,clearLine,SELIG_SPEED} from '../public/play/hunter.mjs';
+import {SPRINT_SPEED} from '../public/play/mechanics.mjs';
+const open=(x,z)=>x>0&&z>0&&x<80&&z<80,world={S:3.2,N:25,map:Array.from({length:25},()=>Array(25).fill(1))};
+assert(Math.abs(SELIG_SPEED/SPRINT_SPEED-.9)<1e-12);
+let wallClosed=true;const walls=(x,z)=>open(x,z)&&!(x>19.7&&x<20.3&&(wallClosed||z<11||z>13));const nav=new Navigator(walls);
+assert(!clearLine({x:18,z:12},{x:22,z:12},walls));assert.equal(nav.path({x:18,z:12},{x:22,z:12},800).length,0);wallClosed=false;const path=nav.path({x:18,z:12},{x:22,z:12});assert(path.length>0);for(let i=1;i<path.length;i++)assert(clearLine(path[i-1],path[i],walls));
+let alerts=0,escapes=0,caught=0;const h=new Hunter({world,free:open,onAlert:()=>alerts++,onEscape:()=>escapes++,onCatch:()=>caught++,random:()=>.5});h.ready=true;h.x=10;h.z=10;h.cooldown=0;const player={x:20,z:10};h.update(.01,player);assert.equal(h.state,'chase');assert.equal(alerts,1);let x=h.x;for(let i=0;i<5;i++)h.update(.04,player);assert(h.x>x,'Immediate pursuit');x=h.x;h.reaction=0;h.path=[player];h.repath=1;h.update(.04,player);assert(Math.abs(h.x-x-SELIG_SPEED*.04)<1e-10);h.update(.01,player,true);assert.equal(h.state,'roam');assert.equal(escapes,1);assert(h.ready,'Escape must not despawn');assert.equal(caught,0);
+h.state='chase';h.reaction=0;h.lost=0;h.x=10;h.z=10;h.lastKnown={x:18,z:10};h.free=()=>false;h.nav=new Navigator(h.free);h.path=[];for(let i=0;i<1000;i++)h.update(.04,{x:30,z:10});assert.equal(h.state,'chase','Distance and 40 seconds without sight must not end pursuit');h.update(.01,{x:30,z:10},true);assert.equal(h.state,'roam','Only sealed room ends pursuit');
+const c=new Hunter({world,free:open,onCatch:()=>caught++});Object.assign(c,{ready:true,state:'chase',reaction:0,x:20,z:10,repath:1});c.update(.01,player);assert.equal(caught,1);assert.equal(c.state,'caught');
+console.log('Passed: exact 90% speed, walls/doors block navigation, immediate pursuit, closed-door escape, persistent corner/distance pursuit, persistent presence and catch.');
