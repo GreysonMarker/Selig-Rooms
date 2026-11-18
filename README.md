@@ -4,7 +4,7 @@ First-person school horror game.
 
 ## Play
 
-https://greysonmarker.github.io/Selig-Rooms/
+Open the deployment listed under this repository’s **Deployments → github-pages** section.
 
 The standalone GitHub Pages edition runs single-player directly in your browser, with no ChatGPT hosting or login. Published from the gh-pages branch.
 
