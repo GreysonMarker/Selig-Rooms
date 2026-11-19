@@ -2,9 +2,9 @@ import {Navigator,clearLine} from './hunter.mjs';
 export const GRADES=[8,9,10,11,12];
 export const QUEST_ROOMS=[5,12,20,28,35];
 export class Objective {
- constructor(){this.reset();}
+ constructor(required=GRADES){this.required=required;this.reset();}
  reset(){this.phase='search';this.grades=new Set();}
- collect(grade){if(this.phase!=='search'||!GRADES.includes(grade)||this.grades.has(grade))return false;this.grades.add(grade);if(this.grades.size===5)this.phase='scene';return true;}
+ collect(grade){if(this.phase!=='search'||!this.required.includes(grade)||this.grades.has(grade))return false;this.grades.add(grade);if(this.grades.size===this.required.length)this.phase='scene';return true;}
  drop(){if(this.phase==='scene')this.phase='drop';}
  takeKey(){if(this.phase==='drop')this.phase='return';}
  escape(){if(this.phase==='return')this.phase='escape';}

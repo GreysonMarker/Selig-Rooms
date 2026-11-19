@@ -1,8 +1,7 @@
 export const WALK_SPEED=2.5,SPRINT_SPEED=6.58;
 export const LOOK={mouseX:.0046,mouseY:.0023,touchX:.008,touchY:.004};
 export class Stamina {
- constructor(){this.value=1;this.chased=false;this.exhausted=false;this.cooldown=0;}
- get duration(){return 4;}
+ constructor(duration=4){this.duration=duration;this.value=1;this.chased=false;this.exhausted=false;this.cooldown=0;}
  get canSprint(){return !this.exhausted&&this.value>0;}
  update(dt,running){if(running&&this.canSprint){this.value=Math.max(0,this.value-dt/this.duration);this.cooldown=1.1;if(this.value<1e-8){this.value=0;this.exhausted=true;}}else{this.cooldown=Math.max(0,this.cooldown-dt);if(!this.cooldown)this.value=Math.min(1,this.value+dt/6);if(this.value>=.2)this.exhausted=false;}}
 }

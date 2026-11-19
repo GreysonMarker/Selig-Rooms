@@ -15,7 +15,7 @@ export function themeFurniture(r,box,solid,S){
  const bench=(x,z)=>{table(x,z,2.45,1.1,.93);v('black',x,.99,z,2.5,.035,1.15)};
  const board=(x,z)=>{v('wood',x,1.72,z,2.9,1.2,.09);v('chalk',x,1.72,z+.055,2.74,1.04,.025);for(let i=0;i<4;i++)v('paper',x-.72+i*.43,1.78+(i%2)*.14,z+.073,.22,.022,.012)};
  if(r.id===0){table(.72,-.47,2,1);return}
- const kind=THEMES[r.id][0];r.theme=kind;
+ const kind=r.theme;r.theme=kind;
  // Signs/boards face into each room. No furniture occupies doorway approaches.
  board(-3.75,-6.25);
  // Small architectural contradictions make the familiar room purpose feel wrong.
