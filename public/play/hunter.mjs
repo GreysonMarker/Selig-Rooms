@@ -36,16 +36,16 @@ export class Hunter {
  this.roamClock=this.path.length?Infinity:.25;
  }
  escape(player){this.state='roam';this.cooldown=20;this.lost=0;this.lastKnown=null;this.onEscape();this.chooseRoam(player,true);}
- update(dt,player,sealed=false){if(!this.ready||this.state==='caught')return;this.cooldown=Math.max(0,this.cooldown-dt);this.repath-=dt;this.roamClock-=dt;const distance=Math.hypot(this.x-player.x,this.z-player.z),detected=distance<=DETECTION_RADIUS&&clearLine(this,player,this.detectionClear,.05),direct=detected&&clearLine(this,player,this.free);
- if(this.state==='roam'&&this.cooldown===0&&detected){this.state='chase';this.lastKnown={x:player.x,z:player.z};this.reaction=0;this.repath=0;this.lost=0;this.path=[];this.onAlert();}
+ update(dt,player,sealed=false,enraged=false){if(!this.ready||this.state==='caught')return;this.cooldown=Math.max(0,this.cooldown-dt);this.repath-=dt;this.roamClock-=dt;const distance=Math.hypot(this.x-player.x,this.z-player.z),detected=enraged||distance<=DETECTION_RADIUS&&clearLine(this,player,this.detectionClear,.05),direct=detected&&clearLine(this,player,this.free);
+ if(this.state==='roam'&&(enraged||this.cooldown===0)&&detected){this.state='chase';this.lastKnown={x:player.x,z:player.z};this.reaction=0;this.repath=0;this.lost=0;this.path=[];this.onAlert();}
  if(this.state==='chase'){
   if(detected){this.lastKnown={x:player.x,z:player.z};this.lost=0}else this.lost+=dt;
   if(sealed){this.escape(player);return;}
   if(this.reaction>0){this.reaction-=dt;return;}
   if(distance<.85&&direct){this.state='caught';this.onCatch();return;}
-  if(this.repath<=0){this.repath=.65;if(direct)this.path=[{x:player.x,z:player.z}];else this.path=this.nav.path(this,player);}
+  if(this.repath<=0){this.repath=.65;if(direct)this.path=[{x:player.x,z:player.z}];else this.path=this.nav.path(this,player,enraged?40000:5500);}
  }else if(this.roamClock<=0){this.chooseRoam(player,this.cooldown>0);}
- let remaining=(this.state==='chase'?SELIG_SPEED:2.05)*dt,planned=false;
+ let remaining=(this.state==='chase'?SELIG_SPEED*(enraged?1.75:1):2.05)*dt,planned=false;
  while(remaining>1e-6){
   if(!this.path.length){
    if(this.state!=='roam'||planned)break;
