@@ -20,8 +20,8 @@ html.release-opening #releaseSplash{position:fixed;inset:0;z-index:9999;display:
 </style><script>
 (() => {
  const now=Date.now();
- // Midnight in Dothan at the start of Nov 21 and Nov 28, 2026.
- if(now<Date.UTC(2026,10,21,6)||now>=Date.UTC(2026,10,28,6))return;
+ // Midnight in Dothan at the start of Nov 21 and Dec 5, 2026 (two weeks).
+ if(now<Date.UTC(2026,10,21,6)||now>=Date.UTC(2026,11,5,6))return;
  try{if(sessionStorage.getItem('seligLaunch')==='ap')return;}catch{}
  document.documentElement.classList.add('release-opening');
  document.addEventListener('DOMContentLoaded',()=>{
